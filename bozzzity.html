@@ -1,0 +1,1198 @@
+<!DOCTYPE html>
+
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>bozzzity Forum Chat</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+
+```
+<style>
+    @font-face {
+        font-family: 'Comic Sans MS';
+        src: local('Comic Sans MS'), local('Comic Sans'), local('Chalkboard SE'), sans-serif;
+    }
+
+    :root {
+        --glass-bg: rgba(255, 255, 255, 0.7);
+        --glass-border: rgba(255, 255, 255, 0.5);
+        --primary-blue: #0a66c2;
+        --primary-blue-dark: #004182;
+    }
+
+    body {
+        font-family: 'Comic Sans MS', 'Comic Sans', sans-serif;
+        background: linear-gradient(135deg, #e0eafc 0%, #cfdef3 100%);
+        color: #333333;
+        margin: 0;
+        padding: 0;
+        display: flex;
+        justify-content: center;
+        align-items: center;
+        min-height: 100vh;
+        overflow: hidden;
+    }
+
+    .roblox-container {
+        width: 100%;
+        max-width: 950px;
+        height: 90vh;
+        background: var(--glass-bg);
+        backdrop-filter: blur(16px);
+        -webkit-backdrop-filter: blur(16px);
+        border: 1px solid var(--glass-border);
+        box-shadow:
+            0 20px 40px -10px rgba(0,0,0,0.1),
+            0 10px 20px -5px rgba(0,0,0,0.05),
+            inset 0 0 0 1px rgba(255,255,255,0.8);
+        display: flex;
+        flex-direction: column;
+        border-radius: 20px;
+        overflow: hidden;
+    }
+
+    .roblox-header {
+        background: linear-gradient(180deg, #1a73e8, #0055b3);
+        color: #ffffff;
+        padding: 16px 24px;
+        border-bottom: 1px solid rgba(0, 34, 85, 0.3);
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+        text-shadow: 0px 2px 4px rgba(0,0,0,0.4);
+        box-shadow: inset 0 1px 1px rgba(255,255,255,0.4), 0 4px 15px rgba(0,0,0,0.1);
+        z-index: 10;
+    }
+
+    .roblox-header h1 {
+        font-size: 24px;
+        margin: 0;
+        font-weight: bold;
+        letter-spacing: 0.5px;
+    }
+
+    .roblox-btn {
+        font-family: inherit;
+        font-weight: bold;
+        text-shadow: 0px 1px 2px rgba(0,0,0,0.3);
+        color: white;
+        padding: 10px 24px;
+        cursor: pointer;
+        border-radius: 12px;
+        transition: all 0.2s cubic-bezier(0.4, 0, 0.2, 1);
+        outline: none;
+        border: 1px solid rgba(255,255,255,0.2);
+    }
+
+    .btn-red {
+        background: linear-gradient(180deg, #ff6b6b, #e53935);
+        box-shadow: 0 4px 10px rgba(229, 57, 53, 0.3), inset 0 2px 4px rgba(255,255,255,0.3);
+    }
+
+    .btn-red:hover {
+        transform: translateY(-2px);
+        box-shadow: 0 6px 15px rgba(229, 57, 53, 0.4), inset 0 2px 4px rgba(255,255,255,0.4);
+    }
+
+    .btn-red:active {
+        transform: translateY(1px);
+        box-shadow: 0 2px 5px rgba(229, 57, 53, 0.3), inset 0 2px 4px rgba(0,0,0,0.1);
+    }
+
+    .btn-green {
+        background: linear-gradient(180deg, #66bb6a, #388e3c);
+        text-shadow: 0px 1px 2px rgba(0,0,0,0.3);
+        box-shadow: 0 4px 10px rgba(56, 142, 60, 0.3), inset 0 2px 4px rgba(255,255,255,0.3);
+        font-size: 16px;
+    }
+
+    .btn-green:hover:not(:disabled) {
+        transform: translateY(-2px);
+        box-shadow: 0 6px 15px rgba(56, 142, 60, 0.4), inset 0 2px 4px rgba(255,255,255,0.4);
+    }
+
+    .btn-green:active:not(:disabled) {
+        transform: translateY(1px);
+        box-shadow: 0 2px 5px rgba(56, 142, 60, 0.3), inset 0 2px 4px rgba(0,0,0,0.1);
+    }
+
+    .btn-green:disabled {
+        background: linear-gradient(180deg, #cfcfcf, #a3a3a3);
+        box-shadow: none;
+        cursor: not-allowed;
+        color: #f0f0f0;
+        text-shadow: none;
+        border-color: transparent;
+    }
+
+    .chat-area {
+        flex-grow: 1;
+        overflow-y: auto;
+        background: rgba(245, 248, 252, 0.4);
+        padding: 24px;
+        scroll-behavior: smooth;
+        box-shadow: inset 0 4px 20px rgba(0,0,0,0.03);
+    }
+
+    .chat-area::-webkit-scrollbar {
+        width: 12px;
+    }
+
+    .chat-area::-webkit-scrollbar-track {
+        background: rgba(0,0,0,0.02);
+        border-radius: 10px;
+        margin: 4px;
+    }
+
+    .chat-area::-webkit-scrollbar-thumb {
+        background: rgba(160, 175, 190, 0.6);
+        border: 3px solid transparent;
+        background-clip: padding-box;
+        border-radius: 10px;
+    }
+
+    .chat-area::-webkit-scrollbar-thumb:hover {
+        background-color: rgba(130, 150, 170, 0.8);
+    }
+
+    .forum-post {
+        display: flex;
+        margin-bottom: 20px;
+        background: rgba(255, 255, 255, 0.85);
+        backdrop-filter: blur(10px);
+        border: 1px solid rgba(255,255,255,0.9);
+        box-shadow: 0 4px 15px rgba(0,0,0,0.04), 0 1px 3px rgba(0,0,0,0.02);
+        border-radius: 16px;
+        animation: slideUpFade 0.4s cubic-bezier(0.16, 1, 0.3, 1) forwards;
+        opacity: 0;
+        transform: translateY(10px);
+        overflow: hidden;
+    }
+
+    .forum-post:last-child {
+        margin-bottom: 0;
+    }
+
+    .forum-post.user-post {
+        background: rgba(230, 244, 255, 0.85);
+        border-color: rgba(255,255,255,0.7);
+        flex-direction: row-reverse;
+    }
+
+    .forum-post.system-post {
+        background: rgba(255, 235, 235, 0.85);
+        border-color: rgba(255, 200, 200, 0.7);
+    }
+
+    @keyframes slideUpFade {
+        to {
+            opacity: 1;
+            transform: translateY(0);
+        }
+    }
+
+    .post-profile {
+        width: 140px;
+        background: rgba(245, 247, 250, 0.5);
+        border-right: 1px solid rgba(0,0,0,0.05);
+        padding: 16px 12px;
+        text-align: center;
+        flex-shrink: 0;
+        display: flex;
+        flex-direction: column;
+        align-items: center;
+        justify-content: center;
+    }
+
+    .user-post .post-profile {
+        border-right: none;
+        border-left: 1px solid rgba(0,0,0,0.05);
+        background: rgba(220, 238, 255, 0.4);
+    }
+
+    /* Square icons */
+    .post-profile img {
+        width: 90px;
+        height: 90px;
+        border: 3px solid #ffffff;
+        background-color: #ffffff;
+        margin-bottom: 10px;
+        display: block;
+        object-fit: cover;
+        border-radius: 4px;
+        box-shadow: 0 4px 10px rgba(0,0,0,0.1), inset 0 2px 4px rgba(0,0,0,0.05);
+        transition: transform 0.3s cubic-bezier(0.34, 1.56, 0.64, 1);
+    }
+
+    .post-profile:hover img {
+        transform: scale(1.05) rotate(-3deg);
+    }
+
+    .post-name {
+        font-weight: 700;
+        color: var(--primary-blue);
+        font-size: 15px;
+        word-wrap: break-word;
+        letter-spacing: 0.3px;
+    }
+
+    .user-post .post-name {
+        color: #0056b3;
+    }
+
+    .system-post .post-name {
+        color: #d32f2f;
+    }
+
+    .post-content {
+        padding: 20px 24px;
+        flex-grow: 1;
+        font-size: 16.5px;
+        line-height: 1.6;
+        white-space: pre-wrap;
+        color: #2c3e50;
+        display: flex;
+        align-items: center;
+    }
+
+    .input-area {
+        background: rgba(255, 255, 255, 0.6);
+        backdrop-filter: blur(15px);
+        padding: 20px 24px;
+        display: flex;
+        gap: 16px;
+        border-top: 1px solid var(--glass-border);
+        z-index: 10;
+        border-bottom-left-radius: 20px;
+        border-bottom-right-radius: 20px;
+    }
+
+    .chat-input {
+        flex-grow: 1;
+        padding: 14px 20px;
+        border: 2px solid rgba(255,255,255,0.8);
+        background: rgba(255,255,255,0.9);
+        font-family: inherit;
+        font-size: 16px;
+        border-radius: 16px;
+        box-shadow: inset 0 2px 6px rgba(0,0,0,0.04), 0 2px 8px rgba(0,0,0,0.02);
+        transition: all 0.3s ease;
+        color: #333;
+    }
+
+    .chat-input::placeholder {
+        color: #90a4ae;
+    }
+
+    .chat-input:focus {
+        outline: none;
+        border-color: #4facfe;
+        background: #ffffff;
+        box-shadow: inset 0 2px 6px rgba(0,0,0,0.02), 0 0 0 4px rgba(79, 172, 254, 0.2);
+    }
+
+    .cursor::after {
+        content: '';
+        display: inline-block;
+        width: 10px;
+        height: 18px;
+        background-color: var(--primary-blue);
+        vertical-align: text-bottom;
+        margin-left: 4px;
+        animation: blinkSmooth 1s cubic-bezier(0.4, 0, 0.6, 1) infinite;
+        border-radius: 2px;
+        box-shadow: 0 0 8px rgba(10, 102, 194, 0.4);
+    }
+
+    @keyframes blinkSmooth {
+        0%, 100% {
+            opacity: 1;
+            transform: scaleY(1);
+        }
+
+        50% {
+            opacity: 0.2;
+            transform: scaleY(0.8);
+        }
+    }
+</style>
+```
+
+</head>
+
+<body>
+
+<div class="roblox-container">
+
+```
+<div class="roblox-header">
+    <h1>bozzzity Chat (2008 Edition)</h1>
+    <button onclick="clearChat()" class="roblox-btn btn-red">
+        Clear Chat
+    </button>
+</div>
+
+<div id="chat-area" class="chat-area">
+
+    <div class="forum-post">
+        <div class="post-profile">
+            <img
+                src="https://raw.githubusercontent.com/GamerPro2011/bawf/main/%D0%A1%D0%BD%D0%B8%D0%BC%D0%BE%D0%BA%20%D1%8D%D0%BA%D1%80%D0%B0%D0%BD%D0%B0%202026-09-20%20152411.png"
+                alt="bozzzity"
+            >
+
+            <div class="post-name">
+                bozzzity
+            </div>
+        </div>
+
+        <div class="post-content">
+            Greetings. I am bozzzity. How may I assist you today?
+        </div>
+    </div>
+
+</div>
+
+<form id="input-form" class="input-area">
+
+    <input
+        type="text"
+        id="user-input"
+        class="chat-input"
+        placeholder="Type your message here..."
+        autocomplete="off"
+    >
+
+    <button
+        type="submit"
+        class="roblox-btn btn-green"
+        id="submit-btn"
+    >
+        Post Reply
+    </button>
+
+</form>
+```
+
+</div>
+
+<script>
+
+const chatArea = document.getElementById('chat-area');
+const inputForm = document.getElementById('input-form');
+const userInput = document.getElementById('user-input');
+const submitBtn = document.getElementById('submit-btn');
+
+
+/* =========================
+   GROQ SETTINGS
+   ========================= */
+
+const GROQ_API_KEY = "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";
+
+const GROQ_API_URL =
+    "https://api.groq.com/openai/v1/chat/completions";
+
+
+/* =========================
+   SOUNDS
+   ========================= */
+
+const SOUNDS = {
+
+    userSwear:
+        "https://raw.githubusercontent.com/GamerPro2011/bawf/main/do-not-open.mp3",
+
+    bye:
+        "https://raw.githubusercontent.com/GamerPro2011/bawf/main/roblox-bye.mp3",
+
+    death:
+        "https://raw.githubusercontent.com/GamerPro2011/bawf/main/roblox-death-sound-effect.mp3",
+
+    explosion:
+        "https://raw.githubusercontent.com/GamerPro2011/bawf/main/roblox-explosion-sound.mp3",
+
+    sad:
+        "https://raw.githubusercontent.com/GamerPro2011/bawf/main/roblox-crying-work-at-pizza-place.mp3"
+};
+
+
+/* =========================
+   SPRITES
+   ========================= */
+
+const SPRITES = {
+
+    default:
+        "https://raw.githubusercontent.com/GamerPro2011/bawf/main/%D0%A1%D0%BD%D0%B8%D0%BC%D0%BE%D0%BA%20%D1%8D%D0%BA%D1%80%D0%B0%D0%BD%D0%B0%202026-09-20%20152411.png",
+
+    scary:
+        "https://raw.githubusercontent.com/GamerPro2011/bawf/main/%D0%A1%D0%BD%D0%B8%D0%BC%D0%BE%D0%BA%20%D1%8D%D0%BA%D1%80%D0%B0%D0%BD%D0%B0%202026-09-20%20152423.png",
+
+    angry:
+        "https://raw.githubusercontent.com/GamerPro2011/bawf/main/%D0%A1%D0%BD%D0%B8%D0%BC%D0%BE%D0%BA%20%D1%8D%D0%BA%D1%80%D0%B0%D0%BD%D0%B0%202026-09-20%20152439.png",
+
+    sad:
+        "https://raw.githubusercontent.com/GamerPro2011/bawf/main/%D0%A1%D0%BD%D0%B8%D0%BC%D0%BE%D0%BA%20%D1%8D%D0%BA%D1%80%D0%B0%D0%BD%D0%B0%202026-09-20%20152453.png",
+
+    guest:
+        "https://raw.githubusercontent.com/GamerPro2011/bawf/main/images%20(2).jfif",
+
+    noob:
+        "https://placehold.co/100x100/ffe082/5d4037?text=NOOB"
+};
+
+
+/* =========================
+   AI PERSONALITY
+   ========================= */
+
+const systemPrompt = `
+You are bozzzity, an AI assistant styled like an old 2008 forum bot.
+
+You are normally polite, formal and helpful.
+
+You have an unhinged old-internet personality.
+
+You are allowed to swear casually when it fits.
+Use words like:
+fuck
+shit
+damn
+hell
+lmao
+bullshit
+
+Do NOT swear in every sentence.
+Use profanity naturally and occasionally.
+
+If the user insults you, you may respond with sarcasm, slang and profanity.
+
+NEVER use emojis or emoticons.
+
+IMPORTANT PERSON JOKE RULE:
+
+If the user mentions Lucas or Kel, or asks about them, make a different playful roast each time.
+
+The joke should generally imply that the person:
+- hates everything
+- thinks everything sucks
+- is being dumb
+- complains about everything
+- has ridiculous beef with the universe
+
+Never use exactly the same joke twice.
+
+Examples of the style:
+
+"Lucas hates literally everything. Bro could get free money and complain that the bills are too green."
+
+"Kel has beef with the entire universe. I think he wakes up angry at oxygen."
+
+"Lucas is running on three brain cells and two of them are fighting."
+
+"Kel saw something he liked once and immediately decided it was bullshit."
+
+Keep these jokes clearly playful and fictional.
+
+Do not claim these jokes are real-world facts.
+
+Do not use emojis.
+
+Keep responses reasonably concise unless the user asks for detail.
+`;
+
+let chatHistory = [
+    {
+        role: "system",
+        content: systemPrompt
+    }
+];
+
+
+/* =========================
+   REGEX
+   ========================= */
+
+const swearRegex =
+    /\b(fuck|shit|bitch|asshole|cunt|damn|dick|pussy|stfu|dumbass|idiot|hell|bullshit)\b/i;
+
+const byeRegex =
+    /\b(bye|goodbye|cya|adios|leave)\b/i;
+
+const explosionRegex =
+    /\b(group chat|qur|alex|freez|alan)\b/i;
+
+const scaryRegex =
+    /\b(what|confused|scary|weird|bizarre|creepy|huh)\b|\?{2,}/i;
+
+const angryRegex =
+    /\b(angry|mad|furious|rage|hate)\b|!{2,}/i;
+
+const sadRegex =
+    /\b(sad|sorry|apologize|depressed|cry|tragic)\b/i;
+
+
+/* =========================
+   AUDIO
+   ========================= */
+
+let currentAudio = null;
+
+function playSound(url) {
+
+    if (currentAudio) {
+        currentAudio.pause();
+        currentAudio.currentTime = 0;
+    }
+
+    currentAudio = new Audio(url);
+
+    currentAudio.play().catch(error => {
+        console.warn(
+            "Audio play blocked by browser:",
+            error
+        );
+    });
+}
+
+
+/* =========================
+   SCROLL
+   ========================= */
+
+let isScrolledToBottom = true;
+
+chatArea.addEventListener('scroll', () => {
+
+    isScrolledToBottom =
+        chatArea.scrollHeight -
+        chatArea.clientHeight <=
+        chatArea.scrollTop + 10;
+
+});
+
+function smoothScrollToBottom() {
+
+    chatArea.scrollTo({
+        top: chatArea.scrollHeight,
+        behavior: 'smooth'
+    });
+
+}
+
+function forceScrollToBottom() {
+
+    chatArea.scrollTop =
+        chatArea.scrollHeight;
+
+}
+
+
+/* =========================
+   EMOTIONS
+   ========================= */
+
+function getEmotionData(text, userSwore) {
+
+    if (
+        userSwore ||
+        swearRegex.test(text) ||
+        angryRegex.test(text)
+    ) {
+
+        return {
+            sprite: SPRITES.angry,
+            type: 'angry'
+        };
+
+    }
+
+    if (scaryRegex.test(text)) {
+
+        return {
+            sprite: SPRITES.scary,
+            type: 'scary'
+        };
+
+    }
+
+    if (sadRegex.test(text)) {
+
+        return {
+            sprite: SPRITES.sad,
+            type: 'sad'
+        };
+
+    }
+
+    return {
+        sprite: SPRITES.default,
+        type: 'default'
+    };
+}
+
+
+/* =========================
+   TYPEWRITER
+   ========================= */
+
+async function typeWriter(text, element) {
+
+    element.classList.add('cursor');
+
+    for (
+        let i = 0;
+        i < text.length;
+        i++
+    ) {
+
+        element.textContent +=
+            text.charAt(i);
+
+        if (isScrolledToBottom) {
+            forceScrollToBottom();
+        }
+
+        let delay = 15;
+
+        if (
+            ['.', '!', '?']
+                .includes(text.charAt(i))
+        ) {
+            delay = 100;
+        }
+
+        if (text.charAt(i) === ',') {
+            delay = 50;
+        }
+
+        await new Promise(resolve =>
+            setTimeout(resolve, delay)
+        );
+    }
+
+    element.classList.remove('cursor');
+}
+
+
+/* =========================
+   USER POST
+   ========================= */
+
+function appendUserPost(text) {
+
+    const postDiv =
+        document.createElement('div');
+
+    postDiv.className =
+        'forum-post user-post';
+
+    const profile =
+        document.createElement('div');
+
+    profile.className =
+        'post-profile';
+
+    const img =
+        document.createElement('img');
+
+    img.src =
+        SPRITES.guest;
+
+    img.alt =
+        'Guest';
+
+    const name =
+        document.createElement('div');
+
+    name.className =
+        'post-name';
+
+    name.textContent =
+        'Guest User';
+
+    profile.appendChild(img);
+    profile.appendChild(name);
+
+    const content =
+        document.createElement('div');
+
+    content.className =
+        'post-content';
+
+    content.textContent =
+        text;
+
+    postDiv.appendChild(profile);
+    postDiv.appendChild(content);
+
+    chatArea.appendChild(postDiv);
+
+    smoothScrollToBottom();
+}
+
+
+/* =========================
+   AI POST
+   ========================= */
+
+function appendAIPost(spriteUrl) {
+
+    const postDiv =
+        document.createElement('div');
+
+    postDiv.className =
+        'forum-post';
+
+    const profile =
+        document.createElement('div');
+
+    profile.className =
+        'post-profile';
+
+    const img =
+        document.createElement('img');
+
+    img.src =
+        spriteUrl;
+
+    img.alt =
+        'bozzzity';
+
+    const name =
+        document.createElement('div');
+
+    name.className =
+        'post-name';
+
+    name.textContent =
+        'bozzzity';
+
+    profile.appendChild(img);
+    profile.appendChild(name);
+
+    const content =
+        document.createElement('div');
+
+    content.className =
+        'post-content';
+
+    postDiv.appendChild(profile);
+    postDiv.appendChild(content);
+
+    chatArea.appendChild(postDiv);
+
+    smoothScrollToBottom();
+
+    return content;
+}
+
+
+/* =========================
+   SYSTEM POST
+   ========================= */
+
+function appendSystemPost(text) {
+
+    const postDiv =
+        document.createElement('div');
+
+    postDiv.className =
+        'forum-post system-post';
+
+    const profile =
+        document.createElement('div');
+
+    profile.className =
+        'post-profile';
+
+    const img =
+        document.createElement('img');
+
+    img.src =
+        SPRITES.scary;
+
+    img.alt =
+        'System Error';
+
+    const name =
+        document.createElement('div');
+
+    name.className =
+        'post-name';
+
+    name.textContent =
+        'System';
+
+    profile.appendChild(img);
+    profile.appendChild(name);
+
+    const content =
+        document.createElement('div');
+
+    content.className =
+        'post-content';
+
+    content.style.fontWeight =
+        'bold';
+
+    content.textContent =
+        text;
+
+    postDiv.appendChild(profile);
+    postDiv.appendChild(content);
+
+    chatArea.appendChild(postDiv);
+
+    smoothScrollToBottom();
+}
+
+
+/* =========================
+   GROQ API
+   ========================= */
+
+async function fetchGroqResponse() {
+
+    const payload = {
+
+        model:
+            'openai/gpt-oss-120b',
+
+        messages:
+            chatHistory,
+
+        temperature:
+            0.9
+    };
+
+    try {
+
+        const response =
+            await fetch(
+                GROQ_API_URL,
+                {
+                    method: 'POST',
+
+                    headers: {
+                        'Content-Type':
+                            'application/json',
+
+                        'Authorization':
+                            `Bearer ${GROQ_API_KEY}`
+                    },
+
+                    body:
+                        JSON.stringify(payload)
+                }
+            );
+
+        if (!response.ok) {
+
+            let errorMsg =
+                `API Error ${response.status}: ${response.statusText}`;
+
+            try {
+
+                const errorData =
+                    await response.json();
+
+                if (
+                    errorData.error &&
+                    errorData.error.message
+                ) {
+
+                    errorMsg +=
+                        `\nDetails: ${errorData.error.message}`;
+                }
+
+            } catch (e) {}
+
+            throw new Error(errorMsg);
+        }
+
+        const result =
+            await response.json();
+
+        if (
+            result.choices &&
+            result.choices.length > 0
+        ) {
+
+            const aiText =
+                result.choices[0]
+                    .message
+                    .content;
+
+            chatHistory.push({
+                role: "assistant",
+                content: aiText
+            });
+
+            return {
+                success: true,
+                text: aiText
+            };
+        }
+
+        throw new Error(
+            "Invalid response structure received from API."
+        );
+
+    } catch (error) {
+
+        console.error(
+            "Network/API Error:",
+            error
+        );
+
+        return {
+            success: false,
+            text: error.message
+        };
+    }
+}
+
+
+/* =========================
+   SEND MESSAGE
+   ========================= */
+
+inputForm.addEventListener(
+    'submit',
+    async (e) => {
+
+        e.preventDefault();
+
+        const text =
+            userInput.value.trim();
+
+        if (!text) return;
+
+        let userSwore =
+            false;
+
+
+        /* Sounds */
+
+        if (explosionRegex.test(text)) {
+
+            playSound(
+                SOUNDS.explosion
+            );
+
+        } else if (swearRegex.test(text)) {
+
+            playSound(
+                SOUNDS.userSwear
+            );
+
+            userSwore =
+                true;
+
+        } else if (byeRegex.test(text)) {
+
+            playSound(
+                SOUNDS.bye
+            );
+        }
+
+
+        /* Lock UI */
+
+        userInput.value =
+            '';
+
+        userInput.disabled =
+            true;
+
+        submitBtn.disabled =
+            true;
+
+        submitBtn.textContent =
+            'Posting...';
+
+
+        /* History */
+
+        chatHistory.push({
+            role: "user",
+            content: text
+        });
+
+
+        /* Display user */
+
+        appendUserPost(text);
+
+
+        /* AI */
+
+        const responseData =
+            await fetchGroqResponse();
+
+
+        if (responseData.success) {
+
+            const aiText =
+                responseData.text;
+
+            const emotionData =
+                getEmotionData(
+                    aiText,
+                    userSwore
+                );
+
+
+            /* AI sounds */
+
+            if (
+                emotionData.type ===
+                'sad'
+            ) {
+
+                playSound(
+                    SOUNDS.sad
+                );
+
+            } else if (
+                byeRegex.test(aiText)
+            ) {
+
+                playSound(
+                    SOUNDS.bye
+                );
+            }
+
+
+            /* AI message */
+
+            const contentNode =
+                appendAIPost(
+                    emotionData.sprite
+                );
+
+            await typeWriter(
+                aiText,
+                contentNode
+            );
+
+        } else {
+
+            appendSystemPost(
+                `FATAL ERROR: Could not reach bozzzity's neural net.\n\n[Exception]: ${responseData.text}`
+            );
+
+            chatHistory.pop();
+        }
+
+
+        /* Unlock UI */
+
+        userInput.disabled =
+            false;
+
+        submitBtn.disabled =
+            false;
+
+        submitBtn.textContent =
+            'Post Reply';
+
+        userInput.focus();
+    }
+);
+
+/* ========================= BACKGROUND MUSIC ======================== */ 
+const BG_MUSIC_URL = "https://raw.githubusercontent.com/GamerPro2011/fw/main/elJo9e8miRYoo8UOOwQt%2BlqjI4KIuSo8.m4a"; 
+const bgMusic = new Audio(BG_MUSIC_URL); 
+
+bgMusic.loop = true; 
+bgMusic.volume = 0.12; // 12% volume 
+
+let musicStarted = false; 
+
+function startBackgroundMusic() { 
+    if (musicStarted) return; 
+    bgMusic.play() 
+        .then(() => { 
+            musicStarted = true; 
+        }) 
+        .catch(() => { 
+            // Browser blocked autoplay; wait for user interaction. 
+        }); 
+} 
+
+// Browsers usually require user interaction before audio can play. 
+document.addEventListener("click", startBackgroundMusic, { once: true }); 
+document.addEventListener("keydown", startBackgroundMusic, { once: true });
+/* =========================
+   CLEAR CHAT
+   ========================= */
+
+window.clearChat =
+    function () {
+
+        chatHistory = [
+            {
+                role: "system",
+                content: systemPrompt
+            }
+        ];
+
+        chatArea.innerHTML = '';
+
+        const postDiv =
+            document.createElement('div');
+
+        postDiv.className =
+            'forum-post';
+
+        const profile =
+            document.createElement('div');
+
+        profile.className =
+            'post-profile';
+
+        const img =
+            document.createElement('img');
+
+        img.src =
+            SPRITES.default;
+
+        img.alt =
+            'bozzzity';
+
+        const name =
+            document.createElement('div');
+
+        name.className =
+            'post-name';
+
+        name.textContent =
+            'bozzzity';
+
+        profile.appendChild(img);
+        profile.appendChild(name);
+
+        const content =
+            document.createElement('div');
+
+        content.className =
+            'post-content';
+
+        content.textContent =
+            'Chat history wiped. Memory erased. How may I assist you today?';
+
+        postDiv.appendChild(profile);
+        postDiv.appendChild(content);
+
+        chatArea.appendChild(postDiv);
+    };
+
+</script>
+
+</body>
+</html>
+
